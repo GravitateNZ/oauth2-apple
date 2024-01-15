@@ -21,7 +21,7 @@ class AppleAccessToken extends AccessToken
     /**
      * @var boolean
      */
-    protected bool $isPrivateEmail;
+    protected bool $isPrivateEmail = false;
 
     /**
      * Constructs an access token.
@@ -35,6 +35,7 @@ class AppleAccessToken extends AccessToken
      */
     public function __construct(array $keys, array $options = [])
     {
+
         if (array_key_exists('refresh_token', $options)) {
             if (empty($options['id_token'])) {
                 throw new InvalidArgumentException('Required option not passed: "id_token"');
@@ -69,7 +70,8 @@ class AppleAccessToken extends AccessToken
             }
 
             if (isset($payload['is_private_email'])) {
-                $this->isPrivateEmail = $payload['is_private_email'];
+                // Apple returns a string instead of a boolean... nice one.
+                $this->isPrivateEmail = $payload['is_private_email'] === 'true' || $payload['is_private_email'] === true;
             }
         }
 
